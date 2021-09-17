@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Please Enter your OTP</h1>
+
+    <form action="{% url 'index' %}" method="POST">
+        {%csrf_token%}
+        <input autocomplete="one-time-code" required />
+        <input type="submit">
+        <!-- <input type="text" autocomplete="one-time-code" inputmode="numeric" />
+        <button type="submit" class="btn btn-link btn-light">
+            submit
+        </button> -->
+    </form> <br>
+</body>
+<script>
+    if ('OTPCredential' in window) {
+        window.addEventListener('DOMContentLoaded', e => {
+            const input = document.querySelector('input[autocomplete="one-time-code"]');
+            if (!input) return;
+            const ac = new AbortController();
+            const form = input.closest('form');
+            if (form) {
+                form.addEventListener('submit', e => {
+                    ac.abort();
+                });
+            }
+            navigator.credentials.get({
+                otp: { transport: ['sms'] },
+                signal: ac.signal
+            }).then(otp => {
+                console.log(otp.code);
+
+                input.value = otp.code;
+                if (form) form.submit();
+            }).catch(err => {
+                console.log(err);
+            });
+        });
+    }
+</script>
+
+</html>
